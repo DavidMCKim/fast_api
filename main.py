@@ -1,26 +1,29 @@
-# import click
-# from core.config import config
-from app.db import mysql_connector
+from app.router import mysql
 import configparser
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
-
-from pydantic import BaseModel
-
-class Item(BaseModel):
-    name: str
-    description: str = None
-    price: float
-    tax: float = None
     
-dmp = FastAPI()
 
-dmp.include_router(router=mysql_connector)
+def create_app():
+    dmp = FastAPI()
 
-@dmp.post('/items/')
-async def create_item(item: Item):
-	return item
+    dmp.include_router(mysql.router)
+
+    return dmp
+
+
+dmp = create_app()
+
+dmp.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+    expose_headers=[]
+)
 
 def main():
     uvicorn.run(
@@ -31,7 +34,7 @@ def main():
     )
 
 if __name__ == "__main__":
-    # 개읹어보 불러오기
+    # 개 불러오기
     config = configparser.ConfigParser()
     config.read('config.ini')
     main()

@@ -1,14 +1,11 @@
 import configparser
 import pymysql as mysql
-from fastapi import APIRouter
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-
-
-class Mysql():
-    def __init__(self, logger) -> None:
+class MYSQL():
+    def __init__(self) -> None:
         self.db = mysql.connect(
                         host=config['DMP_MYSQL']['host'],
                         user=config['DMP_MYSQL']['user'],
@@ -18,7 +15,6 @@ class Mysql():
                     )
 
         self.cursor = self.db.cursor()
-        self.logger = logger
 
     def select(self, query):
         result = []
@@ -30,7 +26,7 @@ class Mysql():
                 result.append(row[0])
 
         except Exception as e:
-            self.logger.error(e)
+            # self.logger.error(e)s
             print(e)
 
         return result
